@@ -1,5 +1,5 @@
 """Data for the todo views"""
-
+# resources/task7/models.py
 
 todos = [
     {"text": "Start the repository", "topic": "Course Project", "status": "done"},
