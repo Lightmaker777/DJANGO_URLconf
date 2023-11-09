@@ -7,7 +7,11 @@ from .models import Note, notes
 
 def home(request):
     sections_url = reverse("sections")
-    html_content = f"<h1>Welcome to my course notes!</h1> <p><a href='{sections_url}'>Click here to browse the list of sections</a></p>"
+    first_note_url = reverse("show_note", args=[1])
+    
+    html_content = f"<h1>Welcome to my course notes!</h1>"
+    html_content += f"<p><a href='{sections_url}'>Click here to browse the list of sections</a> | <a href='{first_note_url}'>Click here to view the first note</a></p>"
+    
     return HttpResponse(html_content)
 
 
@@ -81,6 +85,38 @@ def non_numeric_notes(request, non_numeric_string):
         html_content += f"<p><a href='{reverse('home')}'>Back to home</a></p>"
 
         return HttpResponse(html_content)
+
+def show_note(request, note_number):
+    if 1 <= note_number <= len(notes):
+        note = notes[note_number - 1]
+        section_title = note['section']
+        note_text = note['text']
+
+        # Determine the next and previous note numbers
+        next_note_number = note_number + 1 if note_number < len(notes) else None
+        prev_note_number = note_number - 1 if note_number > 1 else None
+
+        # Create links using reverse function
+        next_note_link = reverse("show_note", args=[next_note_number]) if next_note_number else None
+        prev_note_link = reverse("show_note", args=[prev_note_number]) if prev_note_number else None
+
+        # Build HTML content
+        html_content = f"<h2>Note number {note_number}</h2>"
+        html_content += f"<h3>{section_title}</h3>"
+        html_content += f"<p>{note_text}</p>"
+
+        # Add navigational links
+        html_content += "<p>"
+        if prev_note_link:
+            html_content += f"<a href='{prev_note_link}'>Previous note</a> | "
+        html_content += f"<a href='{reverse('home')}'>Back to home</a> | "
+        if next_note_link:
+            html_content += f"<a href='{next_note_link}'>Next note</a>"
+        html_content += "</p>"
+
+        return HttpResponse(html_content)
+    else:
+        return HttpResponse("<h1>Note not found</h1>")
 
 def redirect_to_section_list(request):
     return HttpResponseRedirect("/notes/")

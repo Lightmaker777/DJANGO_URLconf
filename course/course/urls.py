@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from notes.views import home, sections, sections_detail, redirect_to_section_list, search_notes, non_numeric_notes
+from notes.views import home, sections, sections_detail, redirect_to_section_list, search_notes, non_numeric_notes, show_note
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -10,4 +10,5 @@ urlpatterns = [
     path("notes/", redirect_to_section_list, name="redirect_to_section_list"),
     path("search/<str:search_term>/", search_notes, name="search_notes"),    
     path("nonnumeric/<str:non_numeric_string>/", non_numeric_notes, name="non_numeric_notes"),
+    path("note/<int:note_number>/", show_note, name="show_note"),
 ]
